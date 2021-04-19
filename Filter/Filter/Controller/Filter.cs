@@ -14,6 +14,7 @@ namespace Filter.Controller
         public PropertyInfo Property { get; private set; }
         public ComboBox Data { get; private set; }
         public Button RemoveButton { get; private set; }
+        public Label Label { get; private set; }
         public string Name { get; private set; }
 
         public Filter(PropertyInfo property, IEnumerable<object> data)
@@ -26,6 +27,9 @@ namespace Filter.Controller
                 Name = attrib.Name;
             }
             Property = property;
+            Label = new Label();
+            Label.AutoSize = true;
+            Label.Text = Name + ": ";
             Data = new ComboBox();
             RemoveButton = new Button();
             RemoveButton.Text = "-";

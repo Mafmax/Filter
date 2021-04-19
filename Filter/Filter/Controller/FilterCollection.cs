@@ -25,6 +25,8 @@ namespace Filter.Controller
         {
             var element = Data?.First();
             Cap = new ComboBox();
+            Cap.Items.Add("[Add]");
+            Cap.SelectedIndex = 0;
             Cap.Items.AddRange(
                 element
                 .GetType()
@@ -73,6 +75,10 @@ namespace Filter.Controller
 
         private void OnChoiceNewFilter(object sender, EventArgs e)
         {
+            if (Cap.SelectedIndex == 0)
+            {
+                return;
+            }
             PropertyInfo property = Data
                 .First()
                 .GetType()
@@ -104,7 +110,7 @@ namespace Filter.Controller
                 box.Width = minSize;
             }
         }
-        private void DrawControl(Control control, int top, ref int left, int additionLeft)
+        private void ToDrawControlParameters(Control control, int top, ref int left, int additionLeft)
         {
             control.Left = left;
             control.Top = top;
@@ -116,6 +122,7 @@ namespace Filter.Controller
 
             container.Controls.Remove(filter.Data);
             container.Controls.Remove(filter.RemoveButton);
+            container.Controls.Remove(filter.Label);
             Filters.Remove(filter);
             Redraw();
         }
@@ -125,6 +132,7 @@ namespace Filter.Controller
             {
                 container.Controls.Remove(item.Data);
                 container.Controls.Remove(item.RemoveButton);
+                container.Controls.Remove(item.Label);
             }
             container.Controls.Remove(Cap);
             FillCap();
@@ -137,13 +145,17 @@ namespace Filter.Controller
 
                 TrimComboBox(item.Data);
                 TrimButton(item.RemoveButton);
-                DrawControl(item.Data, offsetTop, ref offsetLeft, additionLeft);
-                DrawControl(item.RemoveButton, offsetTop, ref offsetLeft, additionLeft);
+                var buf = offsetLeft;
+                ToDrawControlParameters(item.Label, offsetTop, ref offsetLeft, additionLeft);
+                offsetLeft= buf;
+                ToDrawControlParameters(item.Data, offsetTop+15, ref offsetLeft, additionLeft);
+                ToDrawControlParameters(item.RemoveButton, offsetTop+15, ref offsetLeft, additionLeft);
                 item.RemoveButton.Click += (object sender, EventArgs e) => DeleteFilter(item);
                 container.Controls.Add(item.Data);
                 container.Controls.Add(item.RemoveButton);
+                container.Controls.Add(item.Label);
             }
-            DrawControl(Cap, offsetTop, ref offsetLeft, additionLeft);
+            ToDrawControlParameters(Cap, offsetTop+5, ref offsetLeft, additionLeft);
             container.Controls.Add(Cap);
             Cap.SelectedIndexChanged += OnChoiceNewFilter;
 
